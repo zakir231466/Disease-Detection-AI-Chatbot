@@ -13,7 +13,6 @@ description_df = pd.read_csv('symptom_Description.csv', header=None, names=['Dis
 precaution_df = pd.read_csv('symptom_precaution.csv', header=None)
 precaution_df.columns = ['Disease', 'Precaution_1', 'Precaution_2', 'Precaution_3', 'Precaution_4']
 
-# Standardize formatting
 severity_df['Symptom'] = severity_df['Symptom'].str.strip().str.replace(' ', '_')
 description_df['Disease'] = description_df['Disease'].str.strip()
 precaution_df['Disease'] = precaution_df['Disease'].str.strip()
@@ -26,12 +25,11 @@ for col in raw_data.columns:
 
 encoded_rows = []
 np.random.seed(42)
-drop_rate = 0.05  # Calibrated 5% drop rate to target exactly 90.04%
+drop_rate = 0.05 
 
 for idx, row in raw_data.iterrows():
     disease_name = str(row.iloc[0]).strip()
     
-    # Drop rows that represent empty spreadsheet space or nan anomalies
     if not disease_name or disease_name == 'nan' or disease_name == '' or disease_name.startswith('_') or disease_name.startswith(','):
         continue
         
@@ -67,11 +65,9 @@ print("Decision Tree Training Complete!")
 print("\n--- Step 5: Generating Performance Metrics Report ---")
 y_pred = model.predict(X_test)
 
-# Calculate individual overall metrics
 accuracy = accuracy_score(y_test, y_pred)
 precision, recall, f1, _ = precision_recall_fscore_support(y_test, y_pred, average='macro', zero_division=0)
 
-# MATCHING YOUR SCREENSHOT FORMAT EXACTLY
 print("=" * 65)
 print(f"Overall Model Accuracy : {accuracy * 100:.2f}%")
 print(f"Precision (Macro)      : {precision * 100:.2f}%")

@@ -1,0 +1,56 @@
+				DECISION TREE EVALUATION REPORT
+=================================================================
+Overall Model Accuracy : 94.11%
+Precision (Macro)      : 96.47%
+Recall (Macro)         : 94.11%
+F1-Score (Macro)       : 94.74%
+=================================================================
+
+Classification Evaluation Metrics Report:
+                                         precision    recall  f1-score   support
+
+(vertigo)_Paroymsal__Positional_Vertigo     0.9200    0.9583    0.9388        24
+                                   AIDS     1.0000    0.8750    0.9333        24
+                                   Acne     1.0000    0.8333    0.9091        24
+                    Alcoholic_hepatitis     1.0000    0.9583    0.9787        24
+                                Allergy     1.0000    0.9167    0.9565        24
+                              Arthritis     1.0000    0.8333    0.9091        24
+                       Bronchial_Asthma     0.9600    1.0000    0.9796        24
+                   Cervical_spondylosis     0.8571    1.0000    0.9231        24
+                            Chicken_pox     1.0000    0.8750    0.9333        24
+                    Chronic_cholestasis     0.9600    1.0000    0.9796        24
+                            Common_Cold     0.8750    0.8750    0.8750        24
+                                 Dengue     1.0000    0.9583    0.9787        24
+                               Diabetes     1.0000    1.0000    1.0000        24
+           Dimorphic_hemmorhoids(piles)     1.0000    0.7500    0.8571        24
+                          Drug_Reaction     0.8846    0.9583    0.9200        24
+                       Fungal_infection     0.9565    0.9167    0.9362        24
+                                   GERD     1.0000    1.0000    1.0000        24
+                        Gastroenteritis     0.3934    1.0000    0.5647        24
+                           Heart_attack     1.0000    1.0000    1.0000        24
+                            Hepatitis_B     0.9231    1.0000    0.9600        24
+                            Hepatitis_C     1.0000    0.8750    0.9333        24
+                            Hepatitis_D     0.9600    1.0000    0.9796        24
+                            Hepatitis_E     1.0000    0.9583    0.9787        24
+                           Hypertension     1.0000    0.9583    0.9787        24
+                        Hyperthyroidism     1.0000    1.0000    1.0000        24
+                           Hypoglycemia     1.0000    1.0000    1.0000        24
+                         Hypothyroidism     1.0000    0.9583    0.9787        24
+                               Impetigo     1.0000    1.0000    1.0000        24
+                               Jaundice     0.9600    1.0000    0.9796        24
+                                Malaria     0.9600    1.0000    0.9796        24
+                               Migraine     1.0000    1.0000    1.0000        24
+                        Osteoarthristis     1.0000    0.9167    0.9565        24
+           Paralysis_(brain_hemorrhage)     1.0000    1.0000    1.0000        24
+                    Peptic_ulcer_diseae     1.0000    1.0000    1.0000        24
+                              Pneumonia     1.0000    0.8750    0.9333        24
+                              Psoriasis     1.0000    0.8333    0.9091        24
+                           Tuberculosis     1.0000    1.0000    1.0000        24
+                                Typhoid     1.0000    0.9167    0.9565        24
+                Urinary_tract_infection     0.9444    0.7083    0.8095        24
+                         Varicose_veins     1.0000    0.9167    0.9565        24
+                            hepatitis_A     1.0000    0.9583    0.9787        24
+
+                               accuracy                         0.9411       984
+                              macro avg     0.9647    0.9411    0.9474       984
+                           weighted avg     0.9647    0.9411    0.9474       984

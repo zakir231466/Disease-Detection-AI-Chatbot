@@ -1,0 +1,75 @@
+
+XGBOOST EVALUATION REPORT
+==============================
+
+Accuracy  : 100.00%
+Precision : 100.00%
+Recall    : 100.00%
+F1-Score  : 100.00%
+
+5-FOLD CROSS VALIDATION
+------------------------------
+Scores        : [1. 1. 1. 1. 1.]
+Mean Accuracy : 100.00%
+Std Deviation : 0.00%
+
+CLASSIFICATION REPORT
+------------------------------
+                                         precision    recall  f1-score   support
+
+(vertigo) Paroymsal  Positional Vertigo       1.00      1.00      1.00        37
+                                   AIDS       1.00      1.00      1.00        42
+                                   Acne       1.00      1.00      1.00        42
+                    Alcoholic hepatitis       1.00      1.00      1.00        40
+                                Allergy       1.00      1.00      1.00        36
+                              Arthritis       1.00      1.00      1.00        42
+                       Bronchial Asthma       1.00      1.00      1.00        48
+                   Cervical spondylosis       1.00      1.00      1.00        37
+                            Chicken pox       1.00      1.00      1.00        38
+                    Chronic cholestasis       1.00      1.00      1.00        31
+                            Common Cold       1.00      1.00      1.00        34
+                                 Dengue       1.00      1.00      1.00        46
+                              Diabetes        1.00      1.00      1.00        35
+           Dimorphic hemmorhoids(piles)       1.00      1.00      1.00        50
+                          Drug Reaction       1.00      1.00      1.00        38
+                       Fungal infection       1.00      1.00      1.00        33
+                                   GERD       1.00      1.00      1.00        43
+                        Gastroenteritis       1.00      1.00      1.00        43
+                           Heart attack       1.00      1.00      1.00        42
+                            Hepatitis B       1.00      1.00      1.00        47
+                            Hepatitis C       1.00      1.00      1.00        40
+                            Hepatitis D       1.00      1.00      1.00        38
+                            Hepatitis E       1.00      1.00      1.00        50
+                          Hypertension        1.00      1.00      1.00        37
+                        Hyperthyroidism       1.00      1.00      1.00        42
+                           Hypoglycemia       1.00      1.00      1.00        44
+                         Hypothyroidism       1.00      1.00      1.00        38
+                               Impetigo       1.00      1.00      1.00        36
+                               Jaundice       1.00      1.00      1.00        37
+                                Malaria       1.00      1.00      1.00        35
+                               Migraine       1.00      1.00      1.00        39
+                        Osteoarthristis       1.00      1.00      1.00        30
+           Paralysis (brain hemorrhage)       1.00      1.00      1.00        38
+                    Peptic ulcer diseae       1.00      1.00      1.00        31
+                              Pneumonia       1.00      1.00      1.00        46
+                              Psoriasis       1.00      1.00      1.00        33
+                           Tuberculosis       1.00      1.00      1.00        40
+                                Typhoid       1.00      1.00      1.00        41
+                Urinary tract infection       1.00      1.00      1.00        41
+                         Varicose veins       1.00      1.00      1.00        40
+                            hepatitis A       1.00      1.00      1.00        44
+
+                               accuracy                           1.00      1624
+                              macro avg       1.00      1.00      1.00      1624
+                           weighted avg       1.00      1.00      1.00      1624
+
+
+CONFUSION MATRIX
+------------------------------
+[[37  0  0 ...  0  0  0]
+ [ 0 42  0 ...  0  0  0]
+ [ 0  0 42 ...  0  0  0]
+ ...
+ [ 0  0  0 ... 41  0  0]
+ [ 0  0  0 ...  0 40  0]
+ [ 0  0  0 ...  0  0 44]]

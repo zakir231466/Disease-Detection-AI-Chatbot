@@ -1,0 +1,1622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediPredict AI - Intelligent Diagnostic Chatbot</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-primary: #0b0f19;
+            --bg-secondary: #131a2b;
+            --bg-glass: rgba(20, 27, 47, 0.65);
+            --border-glass: rgba(255, 255, 255, 0.06);
+            --border-glow: rgba(6, 182, 212, 0.15);
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --primary: #06b6d4;
+            --primary-rgb: 6, 182, 212;
+            --secondary: #3b82f6;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --font-main: 'Inter', sans-serif;
+            --font-display: 'Outfit', sans-serif;
+            --glow-color: rgba(6, 182, 212, 0.4);
+            --shadow-premium: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+        }
+
+        .light-mode {
+            --bg-primary: #f8fafc;
+            --bg-secondary: #ffffff;
+            --bg-glass: rgba(255, 255, 255, 0.75);
+            --border-glass: rgba(0, 0, 0, 0.06);
+            --border-glow: rgba(6, 182, 212, 0.1);
+            --text-primary: #0f172a;
+            --text-secondary: #64748b;
+            --primary: #0891b2;
+            --primary-rgb: 8, 145, 178;
+            --secondary: #2563eb;
+            --success: #059669;
+            --warning: #d97706;
+            --danger: #dc2626;
+            --glow-color: rgba(8, 145, 178, 0.2);
+            --shadow-premium: 0 15px 30px -10px rgba(15, 23, 42, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* Ambient glowing circles */
+        .ambient-glow {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(var(--primary-rgb), 0.08) 0%, rgba(0, 0, 0, 0) 70%);
+            z-index: -1;
+            pointer-events: none;
+            filter: blur(40px);
+        }
+
+        .glow-1 { top: -100px; left: -100px; }
+        .glow-2 { bottom: -100px; right: -100px; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        .light-mode ::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.1);
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+
+        /* App Layout Container */
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 1.5rem;
+            flex-grow: 1;
+            height: 100vh;
+            max-height: 100vh;
+        }
+
+        /* Header block */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 1rem 1rem 1rem;
+            border-bottom: 1px solid var(--border-glass);
+            margin-bottom: 1rem;
+            flex-shrink: 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-family: var(--font-display);
+            font-size: 1.6rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-icon {
+            color: var(--primary);
+            -webkit-text-fill-color: initial;
+            animation: pulse-glow 2.5s infinite alternate;
+        }
+
+        .theme-toggle-btn {
+            background: var(--bg-glass);
+            border: 1px solid var(--border-glass);
+            color: var(--text-primary);
+            padding: 0.6rem 1rem;
+            border-radius: 9999px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+
+        .theme-toggle-btn:hover {
+            border-color: var(--primary);
+            box-shadow: 0 0 10px var(--border-glow);
+        }
+
+        /* Dashboard Grid Layout */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            gap: 1.5rem;
+            flex-grow: 1;
+            overflow: hidden;
+            min-height: 0; /* Important for flex child with overflow scroll */
+        }
+
+        /* Sidebar styling */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            overflow-y: auto;
+            padding-right: 0.25rem;
+        }
+
+        /* Glass Cards styles */
+        .glass-card {
+            background: var(--bg-glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-glass);
+            border-radius: 20px;
+            padding: 1.25rem;
+            box-shadow: var(--shadow-premium);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .sidebar-title {
+            font-family: var(--font-display);
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-primary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .sidebar-title i {
+            color: var(--primary);
+        }
+
+        /* Patient Card */
+        .patient-card {
+            border-left: 4px solid var(--primary);
+        }
+
+        .profile-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .profile-label {
+            color: var(--text-secondary);
+        }
+
+        .profile-val {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .symptom-tag-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            margin-top: 0.75rem;
+            min-height: 40px;
+            align-content: flex-start;
+        }
+
+        .symptom-tag {
+            background: rgba(var(--primary-rgb), 0.1);
+            color: var(--primary);
+            border: 1px solid rgba(var(--primary-rgb), 0.2);
+            font-size: 0.75rem;
+            padding: 0.25rem 0.6rem;
+            border-radius: 9999px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            animation: scale-up 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .symptom-tag i {
+            font-size: 0.7rem;
+            cursor: pointer;
+        }
+
+        /* Models Selector Section */
+        .models-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 0.65rem;
+        }
+
+        .model-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-glass);
+            border-radius: 12px;
+            padding: 0.85rem 1rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.25s ease;
+        }
+
+        .light-mode .model-card {
+            background: rgba(0, 0, 0, 0.02);
+        }
+
+        .model-card:hover {
+            border-color: rgba(var(--primary-rgb), 0.4);
+            background: rgba(var(--primary-rgb), 0.03);
+            transform: translateX(4px);
+        }
+
+        .model-card.active {
+            border-color: var(--primary);
+            background: rgba(var(--primary-rgb), 0.08);
+            box-shadow: 0 0 15px rgba(var(--primary-rgb), 0.15);
+        }
+
+        .model-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+
+        .model-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+        }
+
+        .model-acc-tag {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .model-accuracy-badge {
+            background: var(--primary);
+            color: #0b0f19;
+            font-weight: 700;
+            font-size: 0.75rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 6px;
+        }
+
+        .light-mode .model-accuracy-badge {
+            color: #ffffff;
+        }
+
+        /* Severity Monitor card */
+        .severity-gauge-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .severity-meter {
+            position: relative;
+            width: 100%;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 9999px;
+            overflow: hidden;
+        }
+        
+        .light-mode .severity-meter {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .severity-fill {
+            height: 100%;
+            width: 0%;
+            border-radius: 9999px;
+            background: linear-gradient(90deg, var(--success), var(--warning), var(--danger));
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .severity-status-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        /* Main Chat Area */
+        .chat-area {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        .chat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border-glass);
+            flex-shrink: 0;
+        }
+
+        .chat-title {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 1.15rem;
+            color: var(--text-primary);
+        }
+
+        .active-model-display {
+            font-size: 0.75rem;
+            background: rgba(var(--primary-rgb), 0.1);
+            color: var(--primary);
+            border: 1px solid rgba(var(--primary-rgb), 0.25);
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        /* Chat viewports wrapper */
+        .chat-viewports {
+            flex-grow: 1;
+            position: relative;
+            margin-top: 1rem;
+            min-height: 0; /* Vital */
+        }
+
+        .viewport-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .viewport-screen.active {
+            opacity: 1;
+            pointer-events: all;
+            z-index: 10;
+        }
+
+        /* Onboarding View */
+        .welcome-screen {
+            justify-content: center;
+            align-items: center;
+            overflow-y: auto;
+        }
+
+        .welcome-card {
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            padding: 2.25rem;
+        }
+
+        .welcome-hero {
+            text-align: center;
+        }
+
+        .welcome-hero i {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 0.75rem;
+            animation: pulse-glow 2.5s infinite alternate;
+        }
+
+        .welcome-hero h1 {
+            font-family: var(--font-display);
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 0.35rem;
+        }
+
+        .welcome-hero p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .input-group label {
+            font-weight: 600;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-text {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-glass);
+            border-radius: 12px;
+            padding: 0.75rem 1rem;
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            font-size: 0.95rem;
+            width: 100%;
+            transition: all 0.2s ease;
+        }
+
+        .light-mode .input-text {
+            background: rgba(0, 0, 0, 0.02);
+        }
+
+        .input-text:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(var(--primary-rgb), 0.2);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .gender-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+        }
+
+        .gender-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-glass);
+            border-radius: 12px;
+            padding: 0.75rem;
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .light-mode .gender-btn {
+            background: rgba(0, 0, 0, 0.02);
+        }
+
+        .gender-btn:hover {
+            border-color: rgba(var(--primary-rgb), 0.5);
+            background: rgba(var(--primary-rgb), 0.02);
+        }
+
+        .gender-btn.active {
+            border-color: var(--primary);
+            background: rgba(var(--primary-rgb), 0.1);
+            color: var(--primary);
+        }
+
+        .btn-gradient {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: #0b0f19;
+            font-weight: 700;
+            font-size: 0.95rem;
+            padding: 0.85rem;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            box-shadow: 0 10px 20px -10px rgba(var(--primary-rgb), 0.3);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .light-mode .btn-gradient {
+            color: #ffffff;
+        }
+
+        .btn-gradient:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 25px -8px rgba(var(--primary-rgb), 0.5);
+            filter: brightness(1.1);
+        }
+
+        .btn-gradient:active {
+            transform: translateY(0);
+        }
+
+        /* Message Board Screen */
+        .message-board {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            scroll-behavior: smooth;
+        }
+
+        .chat-bubble-row {
+            display: flex;
+            width: 100%;
+        }
+
+        .chat-bubble-row.bot {
+            justify-content: flex-start;
+        }
+
+        .chat-bubble-row.user {
+            justify-content: flex-end;
+        }
+
+        .chat-bubble {
+            max-width: 75%;
+            padding: 1rem 1.25rem;
+            border-radius: 18px;
+            line-height: 1.5;
+            font-size: 0.95rem;
+            box-shadow: 0 4px 15px -5px rgba(0,0,0,0.1);
+            animation: bubble-appear 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .chat-bubble-row.bot .chat-bubble {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-glass);
+            color: var(--text-primary);
+            border-top-left-radius: 4px;
+        }
+
+        .light-mode .chat-bubble-row.bot .chat-bubble {
+            background: rgba(0, 0, 0, 0.03);
+        }
+
+        .chat-bubble-row.user .chat-bubble {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: #0b0f19;
+            font-weight: 500;
+            border-top-right-radius: 4px;
+        }
+
+        .light-mode .chat-bubble-row.user .chat-bubble {
+            color: #ffffff;
+        }
+
+        /* Quick reply options */
+        .quick-replies-row {
+            display: flex;
+            gap: 0.6rem;
+            margin-left: 1rem;
+            margin-top: -0.25rem;
+            flex-wrap: wrap;
+            animation: fade-in 0.4s ease;
+        }
+
+        .quick-reply-btn {
+            background: var(--bg-glass);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 0.5rem 1.25rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .quick-reply-btn:hover {
+            background: var(--primary);
+            color: #0b0f19;
+            box-shadow: 0 0 10px rgba(var(--primary-rgb), 0.3);
+        }
+
+        .light-mode .quick-reply-btn:hover {
+            color: #ffffff;
+        }
+
+        /* Typing indicator animation */
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 0.25rem 0.5rem;
+        }
+
+        .typing-indicator span {
+            width: 8px;
+            height: 8px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: inline-block;
+            animation: bounce 1.3s infinite ease-in-out;
+            opacity: 0.4;
+        }
+
+        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+
+        /* Input Controls container */
+        .input-bar-container {
+            padding: 1rem 0 0 0;
+            border-top: 1px solid var(--border-glass);
+            display: flex;
+            gap: 0.75rem;
+            flex-shrink: 0;
+        }
+
+        .chat-input-field {
+            flex-grow: 1;
+            border-radius: 14px;
+            font-size: 0.95rem;
+            padding: 0.85rem 1.25rem;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-glass);
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .light-mode .chat-input-field {
+            background: rgba(0, 0, 0, 0.02);
+        }
+
+        .chat-input-field:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(var(--primary-rgb), 0.15);
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .btn-circle {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: #0b0f19;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.15rem;
+            box-shadow: 0 5px 15px -5px rgba(var(--primary-rgb), 0.3);
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .light-mode .btn-circle {
+            color: #ffffff;
+        }
+
+        .btn-circle:hover {
+            transform: scale(1.03);
+            filter: brightness(1.1);
+        }
+
+        /* Final Diagnosis Report Screen */
+        .report-screen {
+            overflow-y: auto;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .report-grid {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 1.5rem;
+            width: 100%;
+            max-width: 900px;
+        }
+
+        .report-radial-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        /* SVG Radial Meter */
+        .radial-meter {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            margin-bottom: 1.25rem;
+        }
+
+        .radial-svg {
+            transform: rotate(-90deg);
+            width: 100%;
+            height: 100%;
+        }
+
+        .radial-track {
+            fill: none;
+            stroke: rgba(255, 255, 255, 0.03);
+            stroke-width: 12;
+        }
+
+        .light-mode .radial-track {
+            stroke: rgba(0, 0, 0, 0.04);
+        }
+
+        .radial-fill {
+            fill: none;
+            stroke: var(--primary);
+            stroke-width: 12;
+            stroke-dasharray: 440;
+            stroke-dashoffset: 440;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .radial-value {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: var(--font-display);
+            font-weight: 800;
+            font-size: 1.8rem;
+            color: var(--text-primary);
+        }
+
+        .radial-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .report-details-card {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            padding: 2rem;
+        }
+
+        .report-header-block {
+            border-bottom: 1px solid var(--border-glass);
+            padding-bottom: 1rem;
+        }
+
+        .report-subtitle {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--primary);
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .report-title-text {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+
+        .section-headline {
+            font-family: var(--font-display);
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-headline i {
+            color: var(--primary);
+        }
+
+        .precautions-list {
+            list-style: none;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.65rem;
+            margin-top: 0.5rem;
+        }
+
+        .precaution-item {
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid var(--border-glass);
+            border-radius: 10px;
+            padding: 0.6rem 0.85rem;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+        }
+
+        .light-mode .precaution-item {
+            background: rgba(0, 0, 0, 0.01);
+        }
+
+        .precaution-item i {
+            color: var(--success);
+        }
+
+        /* Empathy Quote block */
+        .empathy-card {
+            background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.08) 0%, rgba(59, 130, 246, 0.08) 100%);
+            border: 1px dashed rgba(var(--primary-rgb), 0.25);
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+            font-style: italic;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            margin-top: 0.5rem;
+            line-height: 1.4;
+        }
+
+        .report-actions {
+            display: flex;
+            justify-content: flex-end;
+            width: 100%;
+            max-width: 900px;
+            margin-top: 1rem;
+        }
+
+        /* Keyframes Animations */
+        @keyframes pulse-glow {
+            0% {
+                text-shadow: 0 0 5px rgba(var(--primary-rgb), 0.2);
+                box-shadow: 0 0 5px rgba(var(--primary-rgb), 0.05);
+            }
+            100% {
+                text-shadow: 0 0 15px rgba(var(--primary-rgb), 0.6);
+                box-shadow: 0 0 15px rgba(var(--primary-rgb), 0.25);
+            }
+        }
+
+        @keyframes scale-up {
+            0% { transform: scale(0.9); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes bubble-appear {
+            0% { transform: translateY(10px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes fade-in {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); opacity: 0.4; }
+            50% { transform: translateY(-6px); opacity: 1; }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 950px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                max-height: 250px;
+            }
+            .app-container {
+                height: auto;
+                max-height: initial;
+            }
+            .report-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="ambient-glow glow-1"></div>
+    <div class="ambient-glow glow-2"></div>
+
+    <div class="app-container">
+        <!-- Header -->
+        <header>
+            <div class="logo">
+                <i class="fa-solid fa-heart-pulse logo-icon"></i>
+                <span>MediPredict <span style="font-weight:400">AI</span></span>
+            </div>
+            
+            <button class="theme-toggle-btn" id="theme-toggle">
+                <i class="fa-solid fa-moon"></i>
+                <span id="theme-text">Dark Mode</span>
+            </button>
+        </header>
+
+        <!-- Main Workspace -->
+        <div class="dashboard-grid">
+            <!-- Sidebar Panel -->
+            <aside class="sidebar">
+                <!-- Patient Card -->
+                <div class="glass-card patient-card">
+                    <h3 class="sidebar-title"><i class="fa-solid fa-hospital-user"></i> Patient Profile</h3>
+                    <div id="patient-inactive-msg" style="color: var(--text-secondary); font-size: 0.85rem; font-style: italic;">
+                        Start a session to build profile
+                    </div>
+                    <div id="patient-active-details" style="display: none;">
+                        <div class="profile-row">
+                            <span class="profile-label">Name:</span>
+                            <span class="profile-val" id="profile-name">---</span>
+                        </div>
+                        <div class="profile-row">
+                            <span class="profile-label">Age:</span>
+                            <span class="profile-val" id="profile-age">---</span>
+                        </div>
+                        <div class="profile-row">
+                            <span class="profile-label">Gender:</span>
+                            <span class="profile-val" id="profile-gender">---</span>
+                        </div>
+                        <div style="margin-top: 1rem; border-top: 1px solid var(--border-glass); padding-top: 0.75rem;">
+                            <span class="profile-label" style="font-size: 0.8rem; font-weight: 600; text-transform: uppercase;">Active Symptoms:</span>
+                            <div class="symptom-tag-container" id="symptoms-holder">
+                                <!-- Tags dynamically added -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Model Selector Card -->
+                <div class="glass-card">
+                    <h3 class="sidebar-title"><i class="fa-solid fa-brain"></i> Classifier Core</h3>
+                    <div class="models-grid" id="models-list">
+                        <!-- Model items dynamically added -->
+                        <div class="model-card active" data-model="random_forest">
+                            <div class="model-info">
+                                <span class="model-name">Random Forest</span>
+                                <span class="model-acc-tag">Ensemble Classifier</span>
+                            </div>
+                            <span class="model-accuracy-badge">Accuracy: 100.0%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Severity Card -->
+                <div class="glass-card">
+                    <h3 class="sidebar-title"><i class="fa-solid fa-gauge-high"></i> Severity Index</h3>
+                    <div class="severity-gauge-container">
+                        <div class="severity-meter">
+                            <div class="severity-fill" id="severity-meter-fill"></div>
+                        </div>
+                        <span class="severity-status-label" id="severity-status-val">Index: 0.0 / 10.0 (Idle)</span>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Chat / Prediction viewports -->
+            <main class="glass-card chat-area">
+                <div class="chat-header">
+                    <h2 class="chat-title" id="view-title">Patient Onboarding</h2>
+                    <div class="active-model-display" id="active-model-badge">
+                        <i class="fa-solid fa-microchip"></i>
+                        <span id="active-model-text">Random Forest</span>
+                    </div>
+                </div>
+
+                <div class="chat-viewports">
+                    <!-- Viewport 1: Onboarding Welcome Screen -->
+                    <div class="viewport-screen welcome-screen active" id="viewport-welcome">
+                        <div class="glass-card welcome-card">
+                            <div class="welcome-hero">
+                                <i class="fa-solid fa-laptop-medical"></i>
+                                <h1>Clinical Onboarding</h1>
+                                <p>Please supply basic parameters to initialize the medical diagnostics session.</p>
+                            </div>
+                            
+                            <form id="onboarding-form" style="display:flex; flex-direction:column; gap:1.25rem;">
+                                <div class="input-group">
+                                    <label for="p-name">Full Name</label>
+                                    <input type="text" id="p-name" class="input-text" placeholder="e.g. John Doe" required autocomplete="off">
+                                </div>
+                                <div class="input-group">
+                                    <label for="p-age">Age</label>
+                                    <input type="number" id="p-age" class="input-text" min="1" max="120" placeholder="e.g. 35" required>
+                                </div>
+                                <div class="input-group">
+                                    <label>Gender</label>
+                                    <div class="gender-options">
+                                        <button type="button" class="gender-btn active" data-gender="Male">Male</button>
+                                        <button type="button" class="gender-btn" data-gender="Female">Female</button>
+                                        <button type="button" class="gender-btn" data-gender="Other">Other</button>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn-gradient" style="margin-top: 0.5rem;">
+                                    <i class="fa-solid fa-notes-medical"></i> Initialize Consultation
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Viewport 2: Messenger Chat screen -->
+                    <div class="viewport-screen" id="viewport-chat" style="height:100%;">
+                        <div class="message-board" id="msg-board">
+                            <!-- Messages added here dynamically -->
+                        </div>
+                        <div class="quick-replies-row" id="quick-replies" style="display:none;">
+                            <!-- Yes / No buttons -->
+                        </div>
+                        <form id="chat-input-form" class="input-bar-container">
+                            <input type="text" id="chat-input-text" class="chat-input-field" placeholder="Describe symptoms (e.g. stomach pain, joint pains)..." autocomplete="off">
+                            <button type="submit" class="btn-circle" id="chat-send-btn">
+                                <i class="fa-solid fa-paper-plane"></i>
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Viewport 3: Diagnosis Prognosis Report -->
+                    <div class="viewport-screen report-screen" id="viewport-report">
+                        <div class="report-grid">
+                            <!-- Radial Circle Card -->
+                            <div class="glass-card report-radial-card">
+                                <div class="radial-meter">
+                                    <svg class="radial-svg">
+                                        <circle class="radial-track" cx="75" cy="75" r="70"></circle>
+                                        <circle class="radial-fill" id="report-radial-fill" cx="75" cy="75" r="70"></circle>
+                                    </svg>
+                                    <div class="radial-value" id="report-confidence-val">0%</div>
+                                </div>
+                                <span class="radial-label">Diagnostics Confidence</span>
+                            </div>
+
+                            <!-- Details Card -->
+                            <div class="glass-card report-details-card">
+                                <div class="report-header-block">
+                                    <span class="report-subtitle">Provisional Prognosis</span>
+                                    <h1 class="report-title-text" id="report-disease">Predicting...</h1>
+                                </div>
+
+                                <div>
+                                    <h4 class="section-headline"><i class="fa-solid fa-book-medical"></i> About this condition</h4>
+                                    <p id="report-description" style="font-size: 0.9rem; line-height: 1.5; color: var(--text-secondary);">
+                                        Fetching clinical description...
+                                    </p>
+                                </div>
+
+                                <div>
+                                    <h4 class="section-headline"><i class="fa-solid fa-shield-halved"></i> Recommended Precautions</h4>
+                                    <ul class="precautions-list" id="report-precautions">
+                                        <!-- Precautions populated dynamically -->
+                                    </ul>
+                                </div>
+
+                                <div class="empathy-card" id="report-quote">
+                                    "Your health is in good hands."
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="report-actions">
+                            <button class="btn-gradient" id="btn-restart">
+                                <i class="fa-solid fa-arrows-rotate"></i> Restart Diagnostics
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // Core Chatbot State Management
+        let appState = {
+            step: 'welcome',
+            patient: {
+                name: '',
+                age: '',
+                gender: 'Male'
+            },
+            model_name: 'random_forest',
+            symptoms: [],
+            symptoms_to_ask: [],
+            current_question_idx: 0,
+            predicted_disease: ''
+        };
+
+        let modelsMetadata = {};
+
+        // DOM elements
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeText = document.getElementById('theme-text');
+        const onboardingForm = document.getElementById('onboarding-form');
+        const chatInputForm = document.getElementById('chat-input-form');
+        const chatInputText = document.getElementById('chat-input-text');
+        const msgBoard = document.getElementById('msg-board');
+        const quickReplies = document.getElementById('quick-replies');
+        const btnRestart = document.getElementById('btn-restart');
+        
+        const viewportWelcome = document.getElementById('viewport-welcome');
+        const viewportChat = document.getElementById('viewport-chat');
+        const viewportReport = document.getElementById('viewport-report');
+        
+        const viewTitle = document.getElementById('view-title');
+        const activeModelText = document.getElementById('active-model-text');
+        const activeModelBadge = document.getElementById('active-model-badge');
+
+        const profileName = document.getElementById('profile-name');
+        const profileAge = document.getElementById('profile-age');
+        const profileGender = document.getElementById('profile-gender');
+        const symptomsHolder = document.getElementById('symptoms-holder');
+        const patientInactiveMsg = document.getElementById('patient-inactive-msg');
+        const patientActiveDetails = document.getElementById('patient-active-details');
+        
+        const severityMeterFill = document.getElementById('severity-meter-fill');
+        const severityStatusVal = document.getElementById('severity-status-val');
+
+        // Dark/Light Mode
+        themeToggle.addEventListener('click', () => {
+            const isLight = document.body.classList.toggle('light-mode');
+            if (isLight) {
+                themeToggle.innerHTML = '<i class="fa-solid fa-sun"></i> <span>Light Mode</span>';
+                localStorage.setItem('theme', 'light');
+            } else {
+                themeToggle.innerHTML = '<i class="fa-solid fa-moon"></i> <span>Dark Mode</span>';
+                localStorage.setItem('theme', 'dark');
+            }
+        });
+
+        // Initialize theme preference
+        if (localStorage.getItem('theme') === 'light') {
+            document.body.classList.add('light-mode');
+            themeToggle.innerHTML = '<i class="fa-solid fa-sun"></i> <span>Light Mode</span>';
+        }
+
+        // Gender button handler
+        document.querySelectorAll('.gender-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.gender-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                appState.patient.gender = btn.dataset.gender;
+            });
+        });
+
+        // Load models accuracy metadata from server
+        async function fetchModels() {
+            try {
+                const response = await fetch('/api/models');
+                const data = await response.json();
+                modelsMetadata = data.models;
+                renderModelsList();
+            } catch (err) {
+                console.error("Could not fetch models metadata: ", err);
+            }
+        }
+
+        function getReadableModelName(id) {
+            const mapping = {
+                'random_forest': 'Random Forest',
+                'xgboost': 'XGBoost',
+                'logistic_regression': 'Logistic Regression',
+                'svm': 'Support Vector Machine (SVM)',
+                'decision_tree': 'Decision Tree'
+            };
+            return mapping[id] || id;
+        }
+
+        function renderModelsList() {
+            const container = document.getElementById('models-list');
+            container.innerHTML = '';
+            
+            Object.keys(modelsMetadata).forEach(key => {
+                const info = modelsMetadata[key];
+                const card = document.createElement('div');
+                card.className = `model-card ${appState.model_name === key ? 'active' : ''}`;
+                card.dataset.model = key;
+                
+                card.innerHTML = `
+                    <div class="model-info">
+                        <span class="model-name">${getReadableModelName(key)}</span>
+                        <span class="model-acc-tag">Train: ${info.train}% | Test: ${info.test}%</span>
+                    </div>
+                    <span class="model-accuracy-badge">${info.test}%</span>
+                `;
+                
+                card.addEventListener('click', () => {
+                    document.querySelectorAll('.model-card').forEach(c => c.classList.remove('active'));
+                    card.classList.add('active');
+                    appState.model_name = key;
+                    activeModelText.innerText = getReadableModelName(key);
+                    
+                    // Add quick status update in chat if we are inside chat
+                    if (appState.step !== 'welcome' && appState.step !== 'complete') {
+                        addBotMessage(`🔄 Switched core classifier to: **${getReadableModelName(key)}**`);
+                    }
+                });
+                
+                container.appendChild(card);
+            });
+        }
+
+        // Screens transition
+        function transitionToScreen(screenId) {
+            [viewportWelcome, viewportChat, viewportReport].forEach(v => {
+                v.classList.remove('active');
+            });
+
+            if (screenId === 'welcome') {
+                viewportWelcome.classList.add('active');
+                viewTitle.innerText = "Patient Onboarding";
+            } else if (screenId === 'chat') {
+                viewportChat.classList.add('active');
+                viewTitle.innerText = "Symptom Analysis";
+            } else if (screenId === 'report') {
+                viewportReport.classList.add('active');
+                viewTitle.innerText = "Diagnostic Report";
+            }
+        }
+
+        // Onboarding Form Submit
+        onboardingForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            appState.patient.name = document.getElementById('p-name').value;
+            appState.patient.age = document.getElementById('p-age').value;
+            
+            // Sync Patient card in Sidebar
+            profileName.innerText = appState.patient.name;
+            profileAge.innerText = appState.patient.age;
+            profileGender.innerText = appState.patient.gender;
+            
+            patientInactiveMsg.style.display = 'none';
+            patientActiveDetails.style.display = 'block';
+
+            // Send initialization request
+            await postChatState('welcome');
+            transitionToScreen('chat');
+        });
+
+        // Send Message / Input Form Submit
+        chatInputForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const text = chatInputText.value.trim();
+            if (!text) return;
+
+            addUserMessage(text);
+            chatInputText.value = '';
+            
+            await processUserInput(text);
+        });
+
+        async function processUserInput(inputVal) {
+            showTypingIndicator();
+            
+            // Prepare payload
+            const payload = {
+                step: appState.step,
+                patient: appState.patient,
+                model_name: appState.model_name,
+                symptoms: appState.symptoms,
+                symptoms_to_ask: appState.symptoms_to_ask,
+                current_question_idx: appState.current_question_idx,
+                predicted_disease: appState.predicted_disease,
+                user_input: inputVal
+            };
+
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await response.json();
+                
+                removeTypingIndicator();
+                
+                // Update State
+                appState.step = data.step;
+                appState.symptoms = data.symptoms || [];
+                appState.symptoms_to_ask = data.symptoms_to_ask || [];
+                appState.current_question_idx = data.current_question_idx || 0;
+                appState.predicted_disease = data.predicted_disease || '';
+
+                // Update UI Sidebar Symptoms Tags
+                updateSymptomTags();
+
+                // Add Bot messages one by one with subtle delays for premium feel
+                for (let msg of data.bot_messages) {
+                    addBotMessage(msg);
+                    await sleep(400);
+                }
+
+                // Manage Suggested Actions (Quick replies)
+                if (data.suggested_actions && data.suggested_actions.length > 0) {
+                    renderQuickReplies(data.suggested_actions);
+                } else {
+                    quickReplies.style.display = 'none';
+                }
+
+                // Check if completed
+                if (data.step === 'complete') {
+                    await sleep(1500);
+                    showFinalReport(data.result);
+                }
+
+            } catch (err) {
+                removeTypingIndicator();
+                console.error("Communication failure: ", err);
+                addBotMessage("⚠️ System error. Failed to communicate with MediPredict Core server.");
+            }
+        }
+
+        // Initial onboarding chat payload trigger
+        async function postChatState(stepOverride) {
+            showTypingIndicator();
+            const payload = {
+                step: stepOverride || appState.step,
+                patient: appState.patient,
+                model_name: appState.model_name,
+                symptoms: appState.symptoms,
+                symptoms_to_ask: appState.symptoms_to_ask,
+                current_question_idx: appState.current_question_idx,
+                predicted_disease: appState.predicted_disease,
+                user_input: ''
+            };
+
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await response.json();
+                removeTypingIndicator();
+                
+                appState.step = data.step;
+                appState.symptoms = data.symptoms || [];
+                appState.symptoms_to_ask = data.symptoms_to_ask || [];
+                appState.current_question_idx = data.current_question_idx || 0;
+                appState.predicted_disease = data.predicted_disease || '';
+
+                updateSymptomTags();
+
+                for (let msg of data.bot_messages) {
+                    addBotMessage(msg);
+                    await sleep(200);
+                }
+            } catch (err) {
+                removeTypingIndicator();
+                console.error("Error initialing chat: ", err);
+            }
+        }
+
+        // Update Symptoms UI tags and compute tentative severity meter
+        function updateSymptomTags() {
+            symptomsHolder.innerHTML = '';
+            if (appState.symptoms.length === 0) {
+                symptomsHolder.innerHTML = '<span style="color:var(--text-secondary); font-size:0.75rem; font-style:italic;">No symptoms detected yet</span>';
+                
+                // Idle index
+                severityMeterFill.style.width = '0%';
+                severityStatusVal.innerText = 'Index: 0.0 / 10.0 (Idle)';
+                return;
+            }
+
+            // Populate tags
+            appState.symptoms.forEach(sym => {
+                const tag = document.createElement('span');
+                tag.className = 'symptom-tag';
+                tag.innerHTML = `${sym.replace(/_/g, ' ')} <i class="fa-solid fa-circle-check"></i>`;
+                symptomsHolder.appendChild(tag);
+            });
+
+            // Calculate mock client-side symptom-based severity indicator (for dynamic feedback during refinement)
+            // Just simple scaling
+            const count = appState.symptoms.length;
+            const score = Math.min((count * 1.5), 10).toFixed(1);
+            severityMeterFill.style.width = `${score * 10}%`;
+            
+            let status = 'Low Risk';
+            if (score > 7) status = 'High Risk - Consultant Recommended';
+            else if (score > 4) status = 'Moderate Severity';
+            
+            severityStatusVal.innerText = `Index: ${score} / 10.0 (${status})`;
+        }
+
+        // Render Quick Reply Yes / No buttons
+        function renderQuickReplies(actions) {
+            quickReplies.innerHTML = '';
+            actions.forEach(action => {
+                const btn = document.createElement('button');
+                btn.className = 'quick-reply-btn';
+                btn.innerText = action;
+                btn.addEventListener('click', () => {
+                    addUserMessage(action);
+                    quickReplies.style.display = 'none';
+                    processUserInput(action);
+                });
+                quickReplies.appendChild(btn);
+            });
+            quickReplies.style.display = 'flex';
+            // Scroll to bottom of message board
+            msgBoard.scrollTop = msgBoard.scrollHeight;
+        }
+
+        // Message rendering helpers
+        function addUserMessage(text) {
+            const row = document.createElement('div');
+            row.className = 'chat-bubble-row user';
+            row.innerHTML = `<div class="chat-bubble">${formatMarkdown(text)}</div>`;
+            msgBoard.appendChild(row);
+            msgBoard.scrollTop = msgBoard.scrollHeight;
+        }
+
+        function addBotMessage(text) {
+            const row = document.createElement('div');
+            row.className = 'chat-bubble-row bot';
+            row.innerHTML = `<div class="chat-bubble">${formatMarkdown(text)}</div>`;
+            msgBoard.appendChild(row);
+            msgBoard.scrollTop = msgBoard.scrollHeight;
+        }
+
+        let typingBubble;
+        function showTypingIndicator() {
+            if (typingBubble) return;
+            typingBubble = document.createElement('div');
+            typingBubble.className = 'chat-bubble-row bot';
+            typingBubble.innerHTML = `
+                <div class="chat-bubble" style="padding: 0.75rem 1.25rem;">
+                    <div class="typing-indicator">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+            `;
+            msgBoard.appendChild(typingBubble);
+            msgBoard.scrollTop = msgBoard.scrollHeight;
+        }
+
+        function removeTypingIndicator() {
+            if (typingBubble) {
+                typingBubble.remove();
+                typingBubble = null;
+            }
+        }
+
+        // Markdown-like formatting (bolding tags, checks)
+        function formatMarkdown(text) {
+            // Replace **text** with <strong>text</strong>
+            let formatted = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            // Format checkmarks
+            formatted = formatted.replace(/✅/g, '<span style="color:var(--success); font-weight:bold;">✅</span>');
+            formatted = formatted.replace(/❌/g, '<span style="color:var(--danger); font-weight:bold;">❌</span>');
+            return formatted;
+        }
+
+        // Show Final Prognosis Report
+        function showFinalReport(result) {
+            transitionToScreen('report');
+            
+            // Populate card contents
+            document.getElementById('report-disease').innerText = result.disease;
+            document.getElementById('report-description').innerText = result.description;
+            document.getElementById('report-quote').innerText = `💡 Wisdom: ${result.quote}`;
+
+            // Populate circular loader svg path
+            const val = Math.round(result.confidence);
+            document.getElementById('report-confidence-val').innerText = `${val}%`;
+            
+            const circle = document.getElementById('report-radial-fill');
+            const circumference = 2 * Math.PI * 70; // 2 * pi * r
+            const offset = circumference - (val / 100) * circumference;
+            circle.style.strokeDasharray = circumference;
+            circle.style.strokeDashoffset = offset;
+
+            // Update severity status in sidebar using actual server calculated score
+            const servScore = result.severity;
+            severityMeterFill.style.width = `${servScore * 14.2}%`; // Score out of 7 scaled to 100%
+            
+            let status = 'Low Severity';
+            if (servScore > 5) status = 'Critical - Direct Consultation Urgent';
+            else if (servScore > 3) status = 'Moderate severity';
+            severityStatusVal.innerText = `Index: ${servScore} / 7.0 (${status})`;
+
+            // Populate Precautions
+            const precautionsList = document.getElementById('report-precautions');
+            precautionsList.innerHTML = '';
+            result.precautions.forEach(prec => {
+                const li = document.createElement('li');
+                li.className = 'precaution-item';
+                li.innerHTML = `<i class="fa-solid fa-circle-check"></i> <span>${prec}</span>`;
+                precautionsList.appendChild(li);
+            });
+        }
+
+        // Reset chatbot to welcome onboarding
+        btnRestart.addEventListener('click', () => {
+            appState = {
+                step: 'welcome',
+                patient: {
+                    name: '',
+                    age: '',
+                    gender: 'Male'
+                },
+                model_name: appState.model_name, // keep active model
+                symptoms: [],
+                symptoms_to_ask: [],
+                current_question_idx: 0,
+                predicted_disease: ''
+            };
+
+            // Reset UI
+            document.getElementById('p-name').value = '';
+            document.getElementById('p-age').value = '';
+            document.querySelectorAll('.gender-btn').forEach(b => {
+                b.classList.remove('active');
+                if (b.dataset.gender === 'Male') b.classList.add('active');
+            });
+
+            msgBoard.innerHTML = '';
+            quickReplies.style.display = 'none';
+            patientInactiveMsg.style.display = 'block';
+            patientActiveDetails.style.display = 'none';
+            symptomsHolder.innerHTML = '';
+            severityMeterFill.style.width = '0%';
+            severityStatusVal.innerText = 'Index: 0.0 / 10.0 (Idle)';
+
+            transitionToScreen('welcome');
+        });
+
+        // Helper Sleep
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        // On Load
+        window.addEventListener('load', () => {
+            fetchModels();
+            transitionToScreen('welcome');
+        });
+    </script>
+</body>
+</html>

@@ -1,41 +1,42 @@
 import pandas as pd
 import numpy as np
+import warnings
 from pathlib import Path
+
 from sklearn import preprocessing
 from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, classification_report
 from xgboost import XGBClassifier
 
-from sklearn.metrics import (
-    accuracy_score,
-    precision_score,
-    recall_score,
-    f1_score,
-    classification_report,
-    confusion_matrix
-)
+warnings.filterwarnings("ignore")
+
+# =========================
+# BASE PATH
+# =========================
+BASE_DIR = Path(__file__).resolve().parent
 
 # =========================
 # LOAD DATA
 # =========================
-BASE_DIR = Path(__file__).resolve().parent
-
 training = pd.read_csv(BASE_DIR / "Data" / "Training.csv")
 
-# clean columns
 training.columns = training.columns.str.replace(r"\.\d+$", "", regex=True)
 training = training.loc[:, ~training.columns.duplicated()]
 
-# features & label
-x = training.iloc[:, :-1]
+# =========================
+# FEATURES / LABEL
+# =========================
+X = training.iloc[:, :-1]
 y = training["prognosis"]
 
-# encode label
 le = preprocessing.LabelEncoder()
 y = le.fit_transform(y)
 
-# split data
+# =========================
+# SPLIT DATA
+# =========================
 x_train, x_test, y_train, y_test = train_test_split(
-    x, y, test_size=0.33, random_state=42
+    X, y, test_size=0.33, random_state=42
 )
 
 # =========================
@@ -51,6 +52,7 @@ model = XGBClassifier(
     random_state=42
 )
 
+print("🚀 Training XGBoost Model...")
 model.fit(x_train, y_train)
 
 # =========================
@@ -59,30 +61,30 @@ model.fit(x_train, y_train)
 y_pred = model.predict(x_test)
 
 # =========================
-# METRICS (RAW)
+# METRICS
 # =========================
 accuracy = accuracy_score(y_test, y_pred)
-precision = precision_score(y_test, y_pred, average='weighted', zero_division=0)
-recall = recall_score(y_test, y_pred, average='weighted', zero_division=0)
-f1 = f1_score(y_test, y_pred, average='weighted', zero_division=0)
+precision = precision_score(y_test, y_pred, average="weighted", zero_division=0)
+recall = recall_score(y_test, y_pred, average="weighted", zero_division=0)
+f1 = f1_score(y_test, y_pred, average="weighted", zero_division=0)
 
-# cross validation
-cv_scores = cross_val_score(model, x, y, cv=5, scoring='accuracy')
+cv_scores = cross_val_score(model, X, y, cv=5)
 
-# classification report
+# =========================
+# CLASSIFICATION REPORT (CLEAN)
+# =========================
 target_names = le.inverse_transform(np.arange(len(le.classes_)))
 
-class_report = classification_report(
+report = classification_report(
     y_test,
     y_pred,
     target_names=target_names,
+    digits=2,
     zero_division=0
 )
 
-cm = confusion_matrix(y_test, y_pred)
-
 # =========================
-# PRINT REPORT (PERCENTAGE FORMAT)
+# PRINT REPORT
 # =========================
 print("\n==============================")
 print("XGBOOST EVALUATION REPORT")
@@ -95,20 +97,16 @@ print(f"F1-Score  : {f1*100:.2f}%")
 
 print("\n5-FOLD CROSS VALIDATION")
 print("------------------------------")
-print("Scores        :", cv_scores)
 print(f"Mean Accuracy : {cv_scores.mean()*100:.2f}%")
 print(f"Std Dev       : {cv_scores.std()*100:.2f}%")
 
-print("\nCLASSIFICATION REPORT")
-print("------------------------------")
-print(class_report)
-
-print("\nCONFUSION MATRIX")
-print("------------------------------")
-print(cm)
+print("\nClassification Evaluation Metrics Report:")
+print("=" * 65)
+print(report)
+print("=" * 65)
 
 # =========================
-# SAVE TXT REPORT (PERCENTAGE FORMAT)
+# SAVE REPORT
 # =========================
 report_text = f"""
 XGBOOST EVALUATION REPORT
@@ -121,21 +119,16 @@ F1-Score  : {f1*100:.2f}%
 
 5-FOLD CROSS VALIDATION
 ------------------------------
-Scores        : {cv_scores}
 Mean Accuracy : {cv_scores.mean()*100:.2f}%
-Std Deviation : {cv_scores.std()*100:.2f}%
+Std Dev       : {cv_scores.std()*100:.2f}%
 
 CLASSIFICATION REPORT
 ------------------------------
-{class_report}
-
-CONFUSION MATRIX
-------------------------------
-{cm}
+{report}
 """
 
 with open("xgboost_evaluation_report.txt", "w", encoding="utf-8") as f:
     f.write(report_text)
 
-print("\nSaved: xgboost_evaluation_report.txt")
+print("\n✅ Saved: xgboost_evaluation_report.txt")
 print("==============================")

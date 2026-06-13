@@ -9,9 +9,8 @@ F1-Score  : 100.00%
 
 5-FOLD CROSS VALIDATION
 ------------------------------
-Scores        : [1. 1. 1. 1. 1.]
 Mean Accuracy : 100.00%
-Std Deviation : 0.00%
+Std Dev       : 0.00%
 
 CLASSIFICATION REPORT
 ------------------------------
@@ -63,13 +62,3 @@ CLASSIFICATION REPORT
                               macro avg       1.00      1.00      1.00      1624
                            weighted avg       1.00      1.00      1.00      1624
 
-
-CONFUSION MATRIX
-------------------------------
-[[37  0  0 ...  0  0  0]
- [ 0 42  0 ...  0  0  0]
- [ 0  0 42 ...  0  0  0]
- ...
- [ 0  0  0 ... 41  0  0]
- [ 0  0  0 ...  0 40  0]
- [ 0  0  0 ...  0  0 44]]

@@ -82,7 +82,7 @@ f1 = f1_score(y_test, y_test_pred, average="weighted", zero_division=0) * 100
 cv_scores = cross_val_score(model, x, y, cv=5)
 
 print("\n======================================")
-print("🚀 XGBoost Model ")
+print("🚀 XGBoost Model")
 print(f"📊 Training Accuracy : {train_acc:.2f}%")
 print(f"📊 Testing Accuracy  : {test_acc:.2f}%")
 print(f"🔁 CV Accuracy       : {cv_scores.mean()*100:.2f}%")
@@ -181,9 +181,9 @@ def chatbot():
     getSeverityDict()
     getprecautionDict()
 
-    print("🤖 HealthCare ChatBot \n")
+    print("🤖 HealthCare ChatBot\n")
 
-    name = input("👉 What is your name? : ")
+    name = input("👉 What is your name? ")
     age = input("👉 Please enter your age: ")
     gender = input("👉 What is your gender? (M/F/Other): ")
 
